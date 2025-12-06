@@ -9,4 +9,5 @@ COPY 2098_health/ /var/www/html/
 
 EXPOSE 80
 
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+
