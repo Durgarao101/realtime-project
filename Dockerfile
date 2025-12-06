@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y apache2 && \
     
 RUN rm -rf /var/www/html/*
 
-COPY ./2098_health/ /var/www/html/
+COPY 2098_health/ /var/www/html/
 
 EXPOSE 80
 
