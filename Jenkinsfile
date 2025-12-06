@@ -3,12 +3,12 @@ pipeline {
 
     environment {
         DOCKER_HUB_REPO = "durga83125/health-centre"
-        IMAGE_TAG = "latest"   // corrected spelling
+        IMAGE_TAG = "latest"
     }
 
     stages {
 
-        stage('Checkout the code from Github Repository') {
+        stage('Checkout Code') {
             steps {
                 git url: 'https://github.com/Durgarao101/realtime-project.git', branch: 'main'
             }
@@ -17,8 +17,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Building Docker Image: ${env.DOCKER_HUB_REPO}:${env.IMAGE_TAG}"
-                    docker.build("${env.DOCKER_HUB_REPO}:${env.IMAGE_TAG}")
+                    echo "Building Docker Image: ${DOCKER_HUB_REPO}:${IMAGE_TAG}"
+                    docker.build("${DOCKER_HUB_REPO}:${IMAGE_TAG}")
                 }
             }
         }
@@ -28,7 +28,9 @@ pipeline {
                 script {
                     echo "Pushing image to Docker Hub..."
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        docker.image("${env.DOCKER_HUB_REPO}:${env.IMAGE_TAG}").push()
+                        def img = docker.image("${DOCKER_HUB_REPO}:${IMAGE_TAG}")
+                        img.push()
+                        img.push("latest")
                     }
                 }
             }
@@ -36,6 +38,9 @@ pipeline {
     }
 
     post {
+        always {
+            sh 'docker system prune -f || true'
+        }
         success {
             echo "Pipeline executed successfully!"
         }
